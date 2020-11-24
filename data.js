@@ -339,8 +339,25 @@ const pe = {
   },
 };
 
+const watchList = {
+  JBH: {
+    securityId: 'JBH',
+    eps: {
+      value: '2.61',
+      date: '20201121',
+      source: 'https://finance.yahoo.com/quote/JBH.ax?ltr=1',
+    },
+    pe: {
+      value: '0.55',
+      date: '20201122',
+      source: 'https://www.morningstar.com/stocks/xasx/JBH/valuation',
+    },
+  },
+};
+
 module.exports = {
   securityList,
   eps,
   pe,
+  watchList,
 };

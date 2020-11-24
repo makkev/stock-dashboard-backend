@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { securityList, eps, pe } = require('./data');
+const { securityList, eps, pe, watchList } = require('./data');
 
 const app = express();
 
@@ -25,7 +25,7 @@ const database = {
 };
 
 app.get('/', (req, res) => {
-  res.send(database.users);
+  res.send('this is working');
 });
 
 app.post('/signin', (req, res) => {
@@ -73,6 +73,21 @@ app.get('/securityDetails/:securityId', (req, res) => {
   res.json(securityDetails);
 });
 
+app.post('/addWatchList/:securityId', (req, res) => {
+  const { securityId } = req.params;
+
+  watchList[securityId] = {
+    securityId,
+    eps: eps[securityId],
+    pe: pe[securityId],
+  };
+  res.json(watchList[securityId]);
+});
+
+app.get('/watchList', (req, res) => {
+  res.json(watchList);
+});
+
 app.listen(3000);
 
 /*
@@ -82,8 +97,8 @@ app.listen(3000);
 /register --> POST = user
 /securityList --> GET = securityList
 /securityDetails/:securityId --> GET = securityDetails
-/addWatchList/:securityId --> POST = watchList
 /watchList --> GET = watcList
+/addWatchList/:securityId --> POST = added watchList
 
 
 
