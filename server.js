@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { securityList, eps, pe, watchList } = require('./data');
+const { securityList, eps, pe, watchList, growth } = require('./data');
 
 const app = express();
 
@@ -80,6 +80,7 @@ app.post('/addWatchList/:securityId', (req, res) => {
     securityId,
     eps: eps[securityId],
     pe: pe[securityId],
+    growth: growth[securityId],
   };
   res.json(watchList[securityId]);
 });

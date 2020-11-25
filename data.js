@@ -339,25 +339,179 @@ const pe = {
   },
 };
 
-const watchList = {
+const growth = {
   JBH: {
-    securityId: 'JBH',
-    eps: {
-      value: '2.61',
-      date: '20201121',
-      source: 'https://finance.yahoo.com/quote/JBH.ax?ltr=1',
-    },
-    pe: {
-      value: '0.55',
-      date: '20201122',
-      source: 'https://www.morningstar.com/stocks/xasx/JBH/valuation',
-    },
+    security: 'JBH',
+    value: '1.12%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/JBH.AX/analysis',
   },
+  MLD: {
+    security: 'MLD',
+    value: '-19.38%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/MLD.AX/analysis',
+  },
+  AHY: {
+    security: 'AHY',
+    value: '-5.58%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/AHY.AX/analysis',
+  },
+  PGH: {
+    security: 'PGH',
+    value: '7.68%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/PGH.AX/analysis',
+  },
+  NAB: {
+    security: 'NAB',
+    value: '5.95%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/NAB.AX/analysis',
+  },
+  ADI: {
+    security: 'ADI',
+    value: '',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/ADI.AX/analysis',
+  },
+  TGR: {
+    security: 'TGR',
+    value: '11.35%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/TGR.AX/analysis',
+  },
+  RFF: {
+    security: 'RFF',
+    value: 'N/A',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/RFF.AX/analysis',
+  },
+  RFG: {
+    security: 'RFG',
+    value: '6.14%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/RFG.AX/analysis',
+  },
+  TLS: {
+    security: 'TLS',
+    value: '-5.08%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/TLS.AX/analysis',
+  },
+  SLK: {
+    security: 'SLK',
+    value: '4.95%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/SLK.AX/analysis',
+  },
+  SHV: {
+    security: 'SHV',
+    value: '47.47%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/SHV.AX/analysis',
+  },
+  ANZ: {
+    security: 'ANZ',
+    value: '7.41%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/ANZ.AX/analysis',
+  },
+  CLH: {
+    security: 'CLH',
+    value: '4.32%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/CLH.AX/analysis',
+  },
+  SOL: {
+    security: 'SOL',
+    value: '5.15%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/SOL.AX/analysis',
+  },
+  IAG: {
+    security: 'IAG',
+    value: '4.69%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/IAG.AX/analysis',
+  },
+  RIO: {
+    security: 'RIO',
+    value: '0.38%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/RIO.AX/analysis',
+  },
+  CAR: {
+    security: 'CAR',
+    value: '9.38%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/CAR.AX/analysis',
+  },
+  HPI: {
+    security: 'HPI',
+    value: '3.37%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/HPI.AX/analysis',
+  },
+  ORI: {
+    security: 'ORI',
+    value: '6.51%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/ORI.AX/analysis',
+  },
+  WPL: {
+    security: 'WPL',
+    value: '16.86%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/WPL.AX/analysis',
+  },
+  QBE: {
+    security: 'QBE',
+    value: '7.90%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/QBE.AX/analysis',
+  },
+  BWP: {
+    security: 'BWP',
+    value: '2.00%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/BWP.AX/analysis',
+  },
+  CKF: {
+    security: 'CKF',
+    value: '6.29%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/CKF.AX/analysis',
+  },
+  WOW: {
+    security: 'WOW',
+    value: '6.48%',
+    date: '20201125',
+    source: 'https://finance.yahoo.com/quote/WOW.AX/analysis',
+  },
+};
+
+const watchList = {
+  // JBH: {
+  //   securityId: 'JBH',
+  //   eps: {
+  //     value: '2.61',
+  //     date: '20201121',
+  //     source: 'https://finance.yahoo.com/quote/JBH.ax?ltr=1',
+  //   },
+  //   pe: {
+  //     value: '0.55',
+  //     date: '20201122',
+  //     source: 'https://www.morningstar.com/stocks/xasx/JBH/valuation',
+  //   },
+  // },
 };
 
 module.exports = {
   securityList,
   eps,
   pe,
+  growth,
   watchList,
 };
