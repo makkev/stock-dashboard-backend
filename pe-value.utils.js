@@ -6,6 +6,14 @@ const PEValue = (
   discountRate,
   numberOfYears
 ) => {
+  console.log(`
+    ${eps}, 
+    ${historicalPE}, 
+    ${expectedGrowthRate}, 
+    ${marginOfSafety}, 
+    ${discountRate}, 
+    ${numberOfYears} 
+  `);
   const conservativeGrowthRate =
     expectedGrowthRate * (1 - marginOfSafety / 100);
   let epsYearly = [];
@@ -21,6 +29,9 @@ const PEValue = (
 
   const presentValue =
     valueAtEndOfPeriod / (1 + discountRate / 100) ** numberOfYears;
+
+  console.log('presentVal: ', presentValue);
+
   return {
     conservativeGrowthRate,
     epsYearly,
