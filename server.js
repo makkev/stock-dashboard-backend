@@ -3,6 +3,23 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
 const fs = require('fs');
+const knex = require('knex');
+
+const db = knex({
+  client: 'pg',
+  connection: {
+    host: '127.0.0.1',
+    user: '',
+    password: '',
+    database: 'stock-dashboard',
+  },
+});
+
+// db.select('*')
+//   .from('users')
+//   .then(data => {
+//     console.log(data);
+//   });
 
 const PEValue = require('./pe-value.utils');
 
@@ -72,58 +89,22 @@ app.post('/signin', (req, res) => {
 app.post('/register', (req, res) => {
   const { email, name, password } = req.body;
 
-  bcrypt.hash('bacon', null, null, function (err, hash) {
-    // Store hash in your password DB.
-    console.log(hash);
-  });
-
-  database.users.push({
-    id: '125',
-    name: name,
-    email: email,
-    password: password,
-    joined: new Date(),
-  });
-  res.json(database.users[database.users.length - 1]);
+  db('users')
+    .returning('*')
+    .insert({
+      email,
+      name,
+      joined: new Date(),
+    })
+    .then(user => {
+      res.json(user[0]);
+    })
+    .catch(err => res.status(400).json('unable to register'));
 });
 
 app.get('/securityList', (req, res) => {
   res.json(securityList);
 });
-
-// const peCalcVal = (
-//   eps,
-//   medianHistoricalPE,
-//   expectedGrowthRate,
-//   marginOfSafety,
-//   discountRate,
-//   numOfYears
-// ) => {
-//   const conservativeGrowthRate =
-//     expectedGrowthRate * (1 - marginOfSafety / 100);
-
-//   let annualEps = [];
-//   annualEps[0] = eps * (1 + rate / 100);
-//   for (let i = 0; i <= numOfYears; i++) {
-//     annualEps = annualEps[i - 1] * (1 + conservativeGrowthRate / 100);
-//   }
-
-//   const finalVal = annualEps[annualEps.length - 1] * medianHistoricalPE;
-
-//   const presentVal = finalVal / (1 + discountRate / 100) ** 5;
-
-//   return {
-//     eps,
-//     medianHistoricalPE,
-//     expectedGrowthRate,
-//     marginOfSafety,
-//     discountRate,
-//     conservativeGrowthRate,
-//     annualEps,
-//     finalVal,
-//     presentVal,
-//   };
-// };
 
 const getSecurityDetails = securityCode => {
   const epsData = JSON.parse(fs.readFileSync(EPS_FILE));
@@ -169,21 +150,32 @@ app.get('/securityDetails/:securityCode', (req, res) => {
   res.json(getSecurityDetails(securityCode));
 });
 
-app.post('/addWatchList/:securityCode', (req, res) => {
-  const { securityCode } = req.params;
+app.post('/addWatchList/:securitycode', (req, res) => {
+  const { email } = req.body;
+  const { securitycode } = req.params;
 
-  watchList.push(securityCode);
-  res.json(watchList);
+  db('watchlist')
+    .returning('*')
+    .insert({
+      email,
+      securitycode,
+    })
+    .then(data => {
+      res.json(data[0]);
+    })
+    .catch(err => res.status(400).json('unable to add watchlist'));
 });
 
 app.get('/watchList', (req, res) => {
-  console.log('watchlist');
-  let watchListDetails = {};
-  watchList.forEach(securityCode => {
-    console.log(securityCode);
-    watchListDetails[securityCode] = getSecurityDetails(securityCode);
-  });
-  res.json(watchListDetails);
+  const { email } = req.body;
+
+  db('watchlist')
+    .select('securitycode')
+    .where({
+      email,
+    })
+    .then(data => res.json(data.map(rec => rec.securitycode)))
+    .catch(err => res.status(400).json('unable to get watchlist'));
 });
 
 /******************************************************************************/
