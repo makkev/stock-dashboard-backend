@@ -166,7 +166,7 @@ app.post('/addWatchList/:securitycode', (req, res) => {
     .catch(err => res.status(400).json('unable to add watchlist'));
 });
 
-app.get('/watchList', (req, res) => {
+app.post('/watchList', (req, res) => {
   const { email } = req.body;
 
   db('watchlist')
