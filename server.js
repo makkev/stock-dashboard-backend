@@ -163,6 +163,15 @@ const getSecurityDetails = securityCode => {
   };
 };
 
+const convertNum = num => {
+  const convert = {
+    K: Number(num.replace('K', '')) * 1000,
+    M: Number(num.replace('M', '')) * 1000000,
+    B: Number(num.replace('B', '')) * 1000000000,
+  };
+  return convert[num.substring(num.length - 1, num.length)];
+};
+
 const getDCF = securityCode => {
   const cash = JSON.parse(fs.readFileSync(CASH_FILE));
   const totalLiabilities = JSON.parse(fs.readFileSync(TOTAL_LIABILITIES_FILE));
@@ -176,30 +185,32 @@ const getDCF = securityCode => {
     securityCode,
     cash: {
       ...cash[securityCode],
-      value: Number(cash[securityCode].value.replace(',', '')),
+      value: Number(cash[securityCode].value.replace(/,/g, '') * 1000),
     },
     totalLiabilities: {
       ...totalLiabilities[securityCode],
-      value: Number(totalLiabilities[securityCode].value.replace(',', '')),
+      value: Number(
+        totalLiabilities[securityCode].value.replace(/,/g, '') * 1000
+      ),
     },
     freeCashFlow: {
       ...freeCashFlow[securityCode],
-      value: Number(freeCashFlow[securityCode].value.replace(',', '')),
+      value: Number(freeCashFlow[securityCode].value.replace(/,/g, '') * 1000),
     },
     sharesOutstanding: {
       ...sharesOutstanding[securityCode],
-      value: Number(sharesOutstanding[securityCode].value.replace(',', '')),
+      value: convertNum(sharesOutstanding[securityCode].value),
     },
     growthData: {
       ...growthData[securityCode],
-      value: Number(growthData[securityCode].value.replace(',', '')),
+      value: Number(growthData[securityCode].value.replace(/%/g, '')),
     },
     dcfCalc: DCFValue(
-      Number(cash[securityCode].value.replace(',', '')),
-      Number(totalLiabilities[securityCode].value.replace(',', '')),
-      Number(freeCashFlow[securityCode].value.replace(',', '')),
-      Number(sharesOutstanding[securityCode].value.replace(',', '')),
-      Number(growthData[securityCode].value.replace(',', '')),
+      Number(cash[securityCode].value.replace(/,/g, '') * 1000),
+      Number(totalLiabilities[securityCode].value.replace(/,/g, '') * 1000),
+      Number(freeCashFlow[securityCode].value.replace(/,/g, '') * 1000),
+      convertNum(sharesOutstanding[securityCode].value),
+      Number(growthData[securityCode].value.replace(/%/g, '')),
       MARGIN_OF_SAFETY,
       GROWTH_DECLINE_RATE,
       DISCOUNT_RATE,
