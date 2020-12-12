@@ -23,6 +23,8 @@ const db = knex({
 
 const PEValue = require('./pe-value.utils');
 
+const DCFValue = require('./dcf-value.utils');
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -34,9 +36,18 @@ const GROWTH_FILE = '/Users/KM/git/web-scraping/data/out/growth.json';
 const PE_FILE = '/Users/KM/git/web-scraping/data/out/pe.json';
 const PRICE_FILE = '/Users/KM/git/web-scraping/data/out/price.json';
 
+const CASH_FILE = '/Users/KM/git/web-scraping/data/out/cash.json';
+const TOTAL_LIABILITIES_FILE =
+  '/Users/KM/git/web-scraping/data/out/total-liabilities.json';
+const FREE_CASH_FILE =
+  '/Users/KM/git/web-scraping/data/out/free-cash-flow.json';
+const SHARES_OUTSTANDING_FILE =
+  '/Users/KM/git/web-scraping/data/out/shares-outstanding.json';
+
 const MARGIN_OF_SAFETY = 25; // percent
 const DISCOUNT_RATE = 2; // percent
 const NUMBER_OF_YEARS = 5;
+const GROWTH_DECLINE_RATE = 5;
 
 const database = {
   users: [
@@ -112,6 +123,13 @@ const getSecurityDetails = securityCode => {
   const peData = JSON.parse(fs.readFileSync(PE_FILE));
   const priceData = JSON.parse(fs.readFileSync(PRICE_FILE));
 
+  // expectedGrowthRate,
+  // marginOfSafety,
+  // growthDeclineRate,
+  // discountRate,
+  // FCFMultiplierYears,
+  // numberOfYears;
+
   return {
     securityCode,
     eps: {
@@ -145,9 +163,60 @@ const getSecurityDetails = securityCode => {
   };
 };
 
+const getDCF = securityCode => {
+  const cash = JSON.parse(fs.readFileSync(CASH_FILE));
+  const totalLiabilities = JSON.parse(fs.readFileSync(TOTAL_LIABILITIES_FILE));
+  const freeCashFlow = JSON.parse(fs.readFileSync(FREE_CASH_FILE));
+  const sharesOutstanding = JSON.parse(
+    fs.readFileSync(SHARES_OUTSTANDING_FILE)
+  );
+  const growthData = JSON.parse(fs.readFileSync(GROWTH_FILE));
+
+  return {
+    securityCode,
+    cash: {
+      ...cash[securityCode],
+      value: Number(cash[securityCode].value.replace(',', '')),
+    },
+    totalLiabilities: {
+      ...totalLiabilities[securityCode],
+      value: Number(totalLiabilities[securityCode].value.replace(',', '')),
+    },
+    freeCashFlow: {
+      ...freeCashFlow[securityCode],
+      value: Number(freeCashFlow[securityCode].value.replace(',', '')),
+    },
+    sharesOutstanding: {
+      ...sharesOutstanding[securityCode],
+      value: Number(sharesOutstanding[securityCode].value.replace(',', '')),
+    },
+    growthData: {
+      ...growthData[securityCode],
+      value: Number(growthData[securityCode].value.replace(',', '')),
+    },
+    dcfCalc: DCFValue(
+      Number(cash[securityCode].value.replace(',', '')),
+      Number(totalLiabilities[securityCode].value.replace(',', '')),
+      Number(freeCashFlow[securityCode].value.replace(',', '')),
+      Number(sharesOutstanding[securityCode].value.replace(',', '')),
+      Number(growthData[securityCode].value.replace(',', '')),
+      MARGIN_OF_SAFETY,
+      GROWTH_DECLINE_RATE,
+      DISCOUNT_RATE,
+      12,
+      10
+    ),
+  };
+};
+
 app.get('/securityDetails/:securityCode', (req, res) => {
   const { securityCode } = req.params;
   res.json(getSecurityDetails(securityCode));
+});
+
+app.get('/getDCF/:securityCode', (req, res) => {
+  const { securityCode } = req.params;
+  res.json(getDCF(securityCode));
 });
 
 app.post('/addWatchList/:securitycode', (req, res) => {
