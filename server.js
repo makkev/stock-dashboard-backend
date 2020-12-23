@@ -25,6 +25,8 @@ const PEValue = require('./pe-value.utils');
 
 const DCFValue = require('./dcf-value.utils');
 
+const ROEValue = require('./roe-value.utils');
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -43,6 +45,11 @@ const FREE_CASH_FILE =
   '/Users/KM/git/web-scraping/data/out/free-cash-flow.json';
 const SHARES_OUTSTANDING_FILE =
   '/Users/KM/git/web-scraping/data/out/shares-outstanding.json';
+
+const SHAREHOLDERS_EQUITY_FILE =
+  '/Users/KM/git/web-scraping/data/out/shareholders-equity.json';
+const ROE_FILE = '/Users/KM/git/web-scraping/data/out/roe.json';
+const DIVIDEND_FILE = '/Users/KM/git/web-scraping/data/out/dividend.json';
 
 const MARGIN_OF_SAFETY = 25; // percent
 const DISCOUNT_RATE = 2; // percent
@@ -220,6 +227,50 @@ const getDCF = securityCode => {
   };
 };
 
+const getROE = securityCode => {
+  const shareholdersEquity = JSON.parse(
+    fs.readFileSync(SHAREHOLDERS_EQUITY_FILE)
+  );
+  const roe = JSON.parse(fs.readFileSync(ROE_FILE));
+  const sharesOutstanding = JSON.parse(
+    fs.readFileSync(SHARES_OUTSTANDING_FILE)
+  );
+  const dividend = JSON.parse(fs.readFileSync(DIVIDEND_FILE));
+  const growthData = JSON.parse(fs.readFileSync(GROWTH_FILE));
+
+  return {
+    securityCode,
+    shareholdersEquity: {
+      ...shareholdersEquity[securityCode],
+      value: Number(
+        shareholdersEquity[securityCode].value.replace(/,/g, '') * 1000
+      ),
+    },
+    roe: {
+      ...roe[securityCode],
+      value: roe[securityCode].value,
+    },
+    sharesOutstanding: {
+      ...sharesOutstanding[securityCode],
+      value: convertNum(sharesOutstanding[securityCode].value),
+    },
+    dividend: {
+      ...dividend[securityCode],
+      value: Number(dividend[securityCode].value),
+    },
+    roeCalc: ROEValue(
+      Number(shareholdersEquity[securityCode].value.replace(/,/g, '') * 1000),
+      Number(roe[securityCode].value),
+      convertNum(sharesOutstanding[securityCode].value),
+      Number(dividend[securityCode].value),
+      Number(growthData[securityCode].value.replace(/%/g, '')),
+      MARGIN_OF_SAFETY,
+      DISCOUNT_RATE,
+      10
+    ),
+  };
+};
+
 app.get('/securityDetails/:securityCode', (req, res) => {
   const { securityCode } = req.params;
   res.json(getSecurityDetails(securityCode));
@@ -228,6 +279,11 @@ app.get('/securityDetails/:securityCode', (req, res) => {
 app.get('/getDCF/:securityCode', (req, res) => {
   const { securityCode } = req.params;
   res.json(getDCF(securityCode));
+});
+
+app.get('/getROE/:securityCode', (req, res) => {
+  const { securityCode } = req.params;
+  res.json(getROE(securityCode));
 });
 
 app.post('/addWatchList/:securitycode', (req, res) => {
